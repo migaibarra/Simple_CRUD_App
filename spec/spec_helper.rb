@@ -1,3 +1,4 @@
+
 require 'rubygems'
 
 # All our specs should require 'spec_helper' (this file)
@@ -12,9 +13,19 @@ require 'shoulda-matchers'
 require 'rack/test'
 require 'capybara'
 require 'capybara/rspec'
+require 'database_cleaner'
+
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods
+
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each) { DatabaseCleaner.start }
+  config.after(:each)  { DatabaseCleaner.clean }
 end
 
 def app
